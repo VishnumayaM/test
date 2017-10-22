@@ -13,7 +13,8 @@ class SearchProduct(scrapy.Spider):
             yield {
                 'product': product.css('a.a-link-normal::attr("title")').extract(),
                 'price': product.css('span.a-color-price::text').extract(),
-               # 'price': product.xpath('span/small/text()').extract_first(),
+                #'price': product.xpath('span/small/text()').extract_first(),
+				#'image':product.css('span.a-dynamic-image::img').extract(),
             }
         next_page = response.xpath('//*[@id="pagn"]/span[7]').css('a.pagnNext::attr("href")').extract_first()
 
