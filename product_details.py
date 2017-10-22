@@ -3,19 +3,20 @@ from search_url import *
  
 
 class SearchProduct(scrapy.Spider):
-    product=raw_input('Enter the name of product you want to search:')
-    name = "keyword"
+    keyword=raw_input('Enter the name of product you want to search:')
+    name = "products"
     start_urls = []
-    start_urls.append(search_url(product))
+    start_urls.append(search_url(keyword))
 
     def parse(self, response):
-        for keyword in response.css('div.keyword'):
+        for product in response.css("ul.s-result-list"):
             yield {
-                'name': keyword.css('span.text::text').extract_first(),
-                'price': keyword.xpath('span/small/text()').extract_first(),
+                'product': product.css('a.a-link-normal::attr("title")').extract(),
+                'price': product.css('span.a-color-price::text').extract(),
+               # 'price': product.xpath('span/small/text()').extract_first(),
             }
+        next_page = response.xpath('//*[@id="pagn"]/span[7]').css('a.pagnNext::attr("href")').extract_first()
 
-        next_page = response.css('li.next a::attr("href")').extract_first()
         if next_page is not None:
             yield response.follow(next_page, self.parse)
 
